@@ -68,7 +68,7 @@ public class DisasterResponseDashboard extends Application {
         publicOutputArea = new TextArea();
         publicOutputArea.setEditable(false);
         publicOutputArea.setPrefHeight(400);
-        publicOutputArea.setFont(Font.font("Monospaced", 16));
+        publicOutputArea.setFont(Font.font("Arial", 16));
         publicOutputArea.setStyle(
             "-fx-background-color: #FDFEFE; -fx-text-fill: #222; -fx-border-radius: 10;"
         );
@@ -148,7 +148,7 @@ public class DisasterResponseDashboard extends Application {
         govBox.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 24;");
         govBox.setAlignment(Pos.CENTER);
 
-        Text title = new Text("Disaster Relief Management");
+        Text title = new Text("Intelligent Disaster Response");
         title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 30));
         title.setFill(Color.DARKSLATEBLUE);
         title.setEffect(new DropShadow(4, Color.SKYBLUE));
@@ -179,7 +179,7 @@ public class DisasterResponseDashboard extends Application {
 
         governmentLogArea = new TextArea();
         governmentLogArea.setEditable(false);
-        governmentLogArea.setFont(Font.font("Monospaced", 15));
+        governmentLogArea.setFont(Font.font("Arial", 15));
         governmentLogArea.setPrefHeight(110);
         governmentLogArea.setMaxWidth(550);
         governmentLogArea.setStyle("-fx-background-color: #FDFEFE; -fx-text-fill: #222;");
