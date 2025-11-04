@@ -1,3 +1,5 @@
+package src;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -13,11 +15,9 @@ import javafx.stage.Stage;
 import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +29,7 @@ public class DisasterResponseDashboard extends Application {
         int foodPackets;
         int waterPackets;
         String route;
+
         Shelter(String name, int capacity, String route) {
             this.name = name;
             this.capacity = capacity;
@@ -37,6 +38,7 @@ public class DisasterResponseDashboard extends Application {
             this.waterPackets = 0;
             this.route = route;
         }
+
         void reset() {
             this.peopleAssigned = 0;
             this.foodPackets = 0;
@@ -86,18 +88,13 @@ public class DisasterResponseDashboard extends Application {
         glow.setToValue(0.6);
         glow.play();
 
+        // single, correct emergency handler
         emergencyBtn.setOnAction(e -> {
-            final AudioClip[] alarm = {null};
             try {
                 AudioClip alarm = new AudioClip(new File("alertsound.mp3").toURI().toString());
-    alarm.play();
-} catch (Exception ex) {
-    System.out.println("Alarm sound file not found");
-                } else {
-                    System.out.println("Warning: Alarm sound file not found");
-                }
+                alarm.play();
             } catch (Exception ex) {
-                System.out.println("Warning: Alarm sound file not found");
+                System.out.println("Alarm sound file not found");
             }
 
             Alert alert = new Alert(Alert.AlertType.WARNING,
@@ -107,7 +104,10 @@ public class DisasterResponseDashboard extends Application {
 
             String logMsg = "\nEMERGENCY reported! Rescue team notified.\n";
             publicOutputArea.appendText(logMsg);
-            governmentLogArea.appendText(logMsg);
+
+            if (governmentLogArea != null) {
+                governmentLogArea.appendText(logMsg);
+            }
         });
 
         Label assignmentLogLabel = new Label("Assignment Log:");
@@ -258,8 +258,8 @@ public class DisasterResponseDashboard extends Application {
         int totalAssigned = 0;
         for (Shelter s : shelters) {
             publicOutputArea.appendText(String.format(
-                    "%s (Route %s): %d people, %d food, %d water. Route: %s\n\n",
-                    s.name, s.route, s.peopleAssigned, s.foodPackets, s.waterPackets, s.route));
+                    "%s (Route %s): %d people, %d food packets, %d water packets.\n\n",
+                    s.name, s.route, s.peopleAssigned, s.foodPackets, s.waterPackets));
             totalAssigned += s.peopleAssigned;
         }
         if (totalAssigned < population) {
