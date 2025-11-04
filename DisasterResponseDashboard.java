@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,6 @@ public class DisasterResponseDashboard extends Application {
 
         TabPane tabPane = new TabPane();
 
-        // Government Dashboard
         Tab governmentTab = new Tab("Government Dashboard");
         governmentTab.setClosable(false);
         VBox governmentDashboard = createGovernmentDashboard();
@@ -62,25 +63,22 @@ public class DisasterResponseDashboard extends Application {
         govWrapper.setAlignment(Pos.CENTER);
         governmentTab.setContent(govWrapper);
 
-        // Public Dashboard
         Tab publicTab = new Tab("Public Dashboard");
         publicTab.setClosable(false);
         publicOutputArea = new TextArea();
         publicOutputArea.setEditable(false);
         publicOutputArea.setPrefHeight(400);
         publicOutputArea.setFont(Font.font("Arial", 16));
-        publicOutputArea.setStyle(
-            "-fx-background-color: #FDFEFE; -fx-text-fill: #222; -fx-border-radius: 10;"
-        );
+        publicOutputArea.setStyle("-fx-background-color: #FDFEFE; -fx-text-fill: #222; -fx-border-radius: 10;");
 
-        // Emergency Button with sound for fixed duration
-        Button emergencyBtn = new Button("🚨 Emergency");
+        Button emergencyBtn = new Button("Emergency");
         emergencyBtn.setFont(Font.font("Segoe UI", FontWeight.BOLD, 20));
         emergencyBtn.setStyle(
             "-fx-background-color: linear-gradient(to right, #e53935, #ffb300);" +
             "-fx-text-fill: white; -fx-background-radius: 30;" +
             "-fx-effect: dropshadow(gaussian,rgba(255,0,0,0.8),6,0,0,2);"
         );
+
         FadeTransition glow = new FadeTransition(Duration.seconds(0.8), emergencyBtn);
         glow.setAutoReverse(true);
         glow.setCycleCount(FadeTransition.INDEFINITE);
@@ -91,25 +89,23 @@ public class DisasterResponseDashboard extends Application {
         emergencyBtn.setOnAction(e -> {
             final AudioClip[] alarm = {null};
             try {
-                URL soundURL = getClass().getResource("/alertsound.mp3");
-                if (soundURL != null) {
-                    alarm[0] = new AudioClip(soundURL.toString());
-                    alarm[0].play();
-                    PauseTransition delay = new PauseTransition(Duration.seconds(4));
-                    delay.setOnFinished(ev -> alarm[0].stop());
-                    delay.play();
+                AudioClip alarm = new AudioClip(new File("alertsound.mp3").toURI().toString());
+    alarm.play();
+} catch (Exception ex) {
+    System.out.println("Alarm sound file not found");
                 } else {
-                    System.out.println("⚠️ Alarm sound file not found!");
+                    System.out.println("Warning: Alarm sound file not found");
                 }
             } catch (Exception ex) {
-                System.out.println("⚠️ Alarm sound file not found!");
+                System.out.println("Warning: Alarm sound file not found");
             }
+
             Alert alert = new Alert(Alert.AlertType.WARNING,
                 "Emergency reported! Officials have been notified for rescue.");
-            alert.setHeaderText("🚨 Emergency Alert");
+            alert.setHeaderText("Emergency Alert");
             alert.showAndWait();
 
-            String logMsg = "\n🚨 EMERGENCY reported! Rescue team notified.\n";
+            String logMsg = "\nEMERGENCY reported! Rescue team notified.\n";
             publicOutputArea.appendText(logMsg);
             governmentLogArea.appendText(logMsg);
         });
@@ -130,8 +126,6 @@ public class DisasterResponseDashboard extends Application {
         tabPane.setTabMinWidth(200);
 
         root.setCenter(tabPane);
-
-        // Center the tab pane
         StackPane centerPane = new StackPane(tabPane);
         centerPane.setAlignment(Pos.CENTER);
         root.setCenter(centerPane);
@@ -170,10 +164,9 @@ public class DisasterResponseDashboard extends Application {
         sheltersInputArea.setMaxWidth(550);
         sheltersInputArea.setPrefRowCount(4);
 
-        Button submitBtn = new Button("📝 Submit Data and Assign");
+        Button submitBtn = new Button("Submit Data and Assign");
         submitBtn.setFont(Font.font("Segoe UI", FontWeight.BOLD, 16));
-        submitBtn.setStyle("-fx-background-color:linear-gradient(to top,#50d8e8,#66bb6a);" +
-                "-fx-text-fill:white;-fx-background-radius:17;");
+        submitBtn.setStyle("-fx-background-color:linear-gradient(to top,#50d8e8,#66bb6a);-fx-text-fill:white;-fx-background-radius:17;");
         submitBtn.setPrefWidth(250);
         submitBtn.setEffect(new DropShadow(9, Color.DARKGRAY));
 
@@ -182,9 +175,8 @@ public class DisasterResponseDashboard extends Application {
         governmentLogArea.setFont(Font.font("Arial", 15));
         governmentLogArea.setPrefHeight(110);
         governmentLogArea.setMaxWidth(550);
-        governmentLogArea.setStyle("-fx-background-color: #FDFEFE; -fx-text-fill: #222;");
 
-        govSuccessLabel = new Label(""); // For assignment confirmation
+        govSuccessLabel = new Label("");
         govSuccessLabel.setFont(Font.font("Segoe UI", FontWeight.SEMI_BOLD, 18));
         govSuccessLabel.setTextFill(Color.FORESTGREEN);
 
@@ -211,9 +203,7 @@ public class DisasterResponseDashboard extends Application {
                 }
                 assignPopulation(population);
                 updatePublicDashboard(population);
-
-                // Assignment confirmation message
-                govSuccessLabel.setText("✅ Shelters assigned and details sent to Public Dashboard!");
+                govSuccessLabel.setText("Shelters assigned and details sent to Public Dashboard!");
                 governmentLogArea.appendText("\nShelters assigned for current operation.\n");
             } catch (NumberFormatException ex) {
                 alerts("Please enter a valid positive integer for population!");
@@ -222,15 +212,8 @@ public class DisasterResponseDashboard extends Application {
         });
 
         govBox.getChildren().addAll(
-                title,
-                popLabel,
-                populationField,
-                shelterLabel,
-                sheltersInputArea,
-                submitBtn,
-                govSuccessLabel,
-                logLabel,
-                governmentLogArea
+                title, popLabel, populationField, shelterLabel,
+                sheltersInputArea, submitBtn, govSuccessLabel, logLabel, governmentLogArea
         );
         return govBox;
     }
@@ -271,17 +254,17 @@ public class DisasterResponseDashboard extends Application {
 
     private void updatePublicDashboard(int population) {
         publicOutputArea.clear();
-        publicOutputArea.appendText("🏠 Shelter Assignments:\n\n");
+        publicOutputArea.appendText("Shelter Assignments:\n\n");
         int totalAssigned = 0;
         for (Shelter s : shelters) {
             publicOutputArea.appendText(String.format(
-                    "🏢 %s (🗺 %s): 👨‍👩‍👧‍👦 %d people, 🍲 %d food, 💧 %d water. Route: %s\n\n",
+                    "%s (Route %s): %d people, %d food, %d water. Route: %s\n\n",
                     s.name, s.route, s.peopleAssigned, s.foodPackets, s.waterPackets, s.route));
             totalAssigned += s.peopleAssigned;
         }
         if (totalAssigned < population) {
             publicOutputArea.appendText(String.format(
-                    "⚠️ WARNING: %d people could not be assigned.\n", population - totalAssigned));
+                    "WARNING: %d people could not be assigned.\n", population - totalAssigned));
         }
     }
 
